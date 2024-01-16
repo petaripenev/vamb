@@ -160,6 +160,7 @@ class ClusterGenerator:
 
         # Move to GPU
         if cuda:
+            indices = indices.cuda()
             matrix = matrix.cuda()
 
         self.MAXSTEPS = maxsteps
@@ -258,7 +259,7 @@ class ClusterGenerator:
         points = _smaller_indices(distances, self.kept_mask, threshold, self.CUDA)
         isdefault = success is None and threshold == _DEFAULT_RADIUS and self.peak_valley_ratio > 0.55
 
-        cluster = Cluster(self.indices[medoid].item(), self.seed, self.indices[points].numpy(),
+        cluster = Cluster(self.indices[medoid].item(), self.seed, self.indices[points].to('cpu').numpy(),
                         self.peak_valley_ratio,
                           threshold, isdefault, self.successes, len(self.attempts))
         return cluster, medoid, points
